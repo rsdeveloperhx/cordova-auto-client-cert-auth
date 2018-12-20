@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 
 public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
-	public static final String TAG = Plugin_CertificateAuthentication.class.getName();
+	private static final String TAG = Plugin_CertificateAuthentication.class.getName();
 
 	private X509Certificate[] _certArr;
     private PrivateKey        _privKey;
@@ -51,11 +51,11 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 		//todo: read pattern from file based settings
 		final KeyChainAliasCallback kcCallback = new KeyChainAliasCallbackImpl(cordova.getActivity(), request);
 		final String keystoreAlias="devicemgl172155225084355600010359E7981339285E5D1F000000010359";
+		Log.d(TAG, "loadFromKeystore().threadPool.submit()");
 
         if (keystoreAlias != null) {
 			    ExecutorService threadPool = cordova.getThreadPool();
 				threadPool.submit(new Runnable() {
-				Log.d(TAG, "loadFromKeystore().threadPool.submit()");
                 @Override
                 public void run() {
 					Log.d(TAG, "loadFromKeystore().run()");
