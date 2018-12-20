@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 
 public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
-	private static final String TAG = Plugin_CertificateAuthentication.class.getName();
+	public static final String TAG = Plugin_CertificateAuthentication.class.getName();
 
 	private X509Certificate[] _certArr;
     private PrivateKey        _privKey;
