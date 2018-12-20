@@ -13,7 +13,7 @@
   <platform name="android">
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="Plugin_CertificateAuthentication">
-        <param name="android-package" value="ch.migros.plugin.commons.Plugin_CertificateAuthentication"/>
+        <param name="android-package" value="ch.migros.plugin.Plugin_CertificateAuthentication"/>
         <param name="onload" value="true" />
       </feature>
     </config-file>
