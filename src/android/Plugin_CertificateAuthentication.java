@@ -12,6 +12,7 @@ import android.security.KeyChainException;
 import android.util.Log;
 import android.widget.Toast;
 import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
 
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
