@@ -10,6 +10,8 @@ import android.security.KeyChain;
 import android.security.KeyChainAliasCallback;
 import android.security.KeyChainException;
 import android.util.Log;
+import android.widget.Toast;
+import android.preference.PreferenceManager;
 
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -43,7 +45,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     private void loadFromKeystore(ICordovaClientCertRequest request) {
      	
 		//todo: read pattern from file based settings
-		
+		final KeyChainAliasCallback kcCallback = new AliasCallback(cordova.getActivity(), request);
 		final String keystoreAlias="devicemgl172155225084355600010359E7981339285E5D1F000000010359";
 
         if (keystoreAlias != null) {
@@ -51,11 +53,11 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 				threadPool.submit(new Runnable() {
                 @Override
                 public void run() {
-                    callback.alias(keystoreAlias);
+                    kcCallback.alias(keystoreAlias);
                 }
             });
         } else {
-            KeyChain.choosePrivateKeyAlias(cordova.getActivity(), callback
+            KeyChain.choosePrivateKeyAlias(cordova.getActivity(), kcCallback
 			                              ,new String[]{"RSA"}, null
 										  ,request.getHost(), request.getPort(), null);
         }
@@ -77,7 +79,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         @Override
         public void alias(String keystoreAlias) {
             try {
-                if (alias != null) {
+                if (keystoreAlias != null) {
                     PrivateKey pk = KeyChain.getPrivateKey(_ctx, keystoreAlias);
                     X509Certificate[] cert = KeyChain.getCertificateChain(_ctx, keystoreAlias);
                     _request.proceed(pk, cert);
