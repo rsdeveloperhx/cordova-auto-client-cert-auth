@@ -31,8 +31,10 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     @Override
     public boolean onReceivedClientCertRequest(CordovaWebView view, ICordovaClientCertRequest request) {
         if (_certArr == null || _privKey == null) {
+			Log.d(TAG, "onReceivedClientCertRequest().loadFromKeystore:  _certArr: " + _certArr + " / _privKey" + _privKey);
             loadFromKeystore(request);
         } else {
+			Log.d(TAG, "onReceivedClientCertRequest().requestProceed:  _certArr: " + _certArr + " / _privKey" + _privKey);
             requestProceed(request);
         }
         return true;
@@ -40,6 +42,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
 	
     public void requestProceed(ICordovaClientCertRequest request) {
+		Log.d(TAG, "onReceivedClientCertRequest().requestProceed()");
         request.proceed(_privKey, _certArr);
     }
 	
@@ -52,12 +55,15 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         if (keystoreAlias != null) {
 			    ExecutorService threadPool = cordova.getThreadPool();
 				threadPool.submit(new Runnable() {
+				Log.d(TAG, "loadFromKeystore().threadPool.submit()");
                 @Override
                 public void run() {
+					Log.d(TAG, "loadFromKeystore().run()");
                     kcCallback.alias(keystoreAlias);
                 }
             });
         } else {
+			Log.d(TAG, "loadFromKeystore().choosePrivateKeyAlias");
             KeyChain.choosePrivateKeyAlias(cordova.getActivity(), kcCallback
 			                              ,new String[]{"RSA"}, null
 										  ,request.getHost(), request.getPort(), null);
@@ -79,12 +85,18 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
         @Override
         public void alias(String keystoreAlias) {
+			Log.d(TAG, "KeyChainAliasCallbackImpl.alias()");
             try {
                 if (keystoreAlias != null) {
                     PrivateKey pk = KeyChain.getPrivateKey(_ctx, keystoreAlias);
+					Log.d(TAG, "PrivateKey="+pk.toString());
+					
                     X509Certificate[] cert = KeyChain.getCertificateChain(_ctx, keystoreAlias);
+					Log.d(TAG, "X509Certificate="+cert.toString());
+					Log.d(TAG, "alias.proceed (if)");
                     _request.proceed(pk, cert);
                 } else {
+					Log.d(TAG, "alias.proceed (else)");
                     _request.proceed(null, null);
                 }
             } catch (Exception ex) {
