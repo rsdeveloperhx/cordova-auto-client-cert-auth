@@ -46,7 +46,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     private void loadFromKeystore(ICordovaClientCertRequest request) {
      	
 		//todo: read pattern from file based settings
-		final KeyChainAliasCallback kcCallback = new AliasCallback(cordova.getActivity(), request);
+		final KeyChainAliasCallback kcCallback = new KeyChainAliasCallbackImpl(cordova.getActivity(), request);
 		final String keystoreAlias="devicemgl172155225084355600010359E7981339285E5D1F000000010359";
 
         if (keystoreAlias != null) {
