@@ -36,7 +36,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public boolean onReceivedClientCertRequest(CordovaWebView view, ICordovaClientCertRequest request) {
-        Log.d(TAG, "Test Version 0.0.9");
+        Log.d(TAG, "Test Version 0.0.10");
         if (_certArr == null || _privKey == null) {
 			Log.d(TAG, "onReceivedClientCertRequest().loadFromKeystore:  _certArr: " + _certArr + " / _privKey=" + _privKey);
             loadFromKeystore(request);
@@ -84,8 +84,8 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
      	
 		//todo: read pattern from file based settings
 		final KeyChainAliasCallback kcCallback = new KeyChainAliasCallbackImpl(cordova.getActivity(), request);
-		//final String keystoreAlias="devicemgl172905225036425600010A14894EF2C5352EBCFF000000010A14";
-        final String keystoreAlias=readAlias();
+		final String keystoreAlias="devicemgl172905225036425600010A14894EF2C5352EBCFF000000010A14";
+       // final String keystoreAlias=readAlias();
         
         
 		Log.d(TAG, "loadFromKeystore().threadPool.submit()");
