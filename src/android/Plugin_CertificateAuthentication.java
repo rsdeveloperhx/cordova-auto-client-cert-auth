@@ -1,5 +1,8 @@
 package ch.migros.plugin;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.ICordovaClientCertRequest;
