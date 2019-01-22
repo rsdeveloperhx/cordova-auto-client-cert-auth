@@ -104,7 +104,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    runOnUiThread(new Runable() {
+                    runOnUiThread(new Runnable() {
                         public void run() {
                             Log.d(TAG, "loadFromKeystore().run()");
                             kcCallback.alias(keystoreAlias);
