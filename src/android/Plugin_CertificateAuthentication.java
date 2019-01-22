@@ -101,8 +101,12 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                        Log.d(TAG, "loadFromKeystore().run()");
-                        kcCallback.alias(keystoreAlias);
+                    runOnUiThread(new Runable() {
+                        public void run() {
+                            Log.d(TAG, "loadFromKeystore().run()");
+                            kcCallback.alias(keystoreAlias);
+                        }
+                    });
             }
             }).start();
 
@@ -116,6 +120,21 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         }
     }
 
+
+	/**
+	 * Convenience Methode für das Starten von Runnables
+	 * auf dem UI Thread aus Background Threads
+	 * @param r
+	 */
+	public static void runOnUiThread(Runnable r) {
+		//check added@20160907: when the current thread is already the ui thread, do not post but call directly run.
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+			r.run();
+		} else {
+			Handler handler = new Handler(Looper.getMainLooper());
+			handler.post(r);
+		}
+	}
 
     static class KeyChainAliasCallbackImpl implements KeyChainAliasCallback {
 
