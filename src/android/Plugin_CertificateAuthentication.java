@@ -97,6 +97,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                 //}
             //});
             
+            try {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -104,7 +105,9 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                     kcCallback.alias(keystoreAlias);
                 }
             }).start();
-            
+            } catch (Exception ex) {
+                Log.e(TAG,"Exception ex: "+ex.toString,ex);
+            }
             
         } else {
 			Log.d(TAG, "loadFromKeystore().choosePrivateKeyAlias with " + keystoreAlias);
@@ -147,7 +150,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
             } catch (Exception ex) {
                 String txt = "alias() Cannot load certificates. Exception="+ex.toString();
                 Log.e(TAG, txt, ex);
-                Toast.makeText(_ctx, txt, Toast.LENGTH_SHORT).show();
+               
             }
         }
     };
