@@ -33,7 +33,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public boolean onReceivedClientCertRequest(CordovaWebView view, ICordovaClientCertRequest request) {
-        Log.d(TAG, "Test Version 0.0.7");
+        Log.d(TAG, "Test Version 0.0.8");
         if (_certArr == null || _privKey == null) {
 			Log.d(TAG, "onReceivedClientCertRequest().loadFromKeystore:  _certArr: " + _certArr + " / _privKey=" + _privKey);
             loadFromKeystore(request);
