@@ -18,6 +18,9 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.ExecutorService;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
 public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
@@ -30,7 +33,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public boolean onReceivedClientCertRequest(CordovaWebView view, ICordovaClientCertRequest request) {
-        Log.d(TAG, "Test Version 0.0.4");
+        Log.d(TAG, "Test Version 0.0.6");
         if (_certArr == null || _privKey == null) {
 			Log.d(TAG, "onReceivedClientCertRequest().loadFromKeystore:  _certArr: " + _certArr + " / _privKey=" + _privKey);
             loadFromKeystore(request);
@@ -47,11 +50,39 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         request.proceed(_privKey, _certArr);
     }
 	
+    /*
+     * Read Alias form MDM stored file
+     * Simply read one entry as plaintext
+     */
+    private String readAlias() {
+        String alias = null;
+        File f = null;
+        BufferedReader b = null;
+        try {
+            f = new File("/enterprise/usr/mgb/reverseproxy_cert_alias.txt");
+            b = new BufferedReader(new FileReader(f));
+            String readLine = readLine = b.readLine();
+            if (readLine != null) {
+                alias = readLine;
+                Log.d(TAG, "readAlias: "+alias);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "readAlias: Exception caught. " + e.toString(), e);
+        } finally {
+            try {
+                b.close();
+            } catch (Exception silent) {
+            }
+        }
+        return alias;
+    }
+	
     private void loadFromKeystore(ICordovaClientCertRequest request) {
      	
 		//todo: read pattern from file based settings
 		final KeyChainAliasCallback kcCallback = new KeyChainAliasCallbackImpl(cordova.getActivity(), request);
-		final String keystoreAlias="devicemgl172905225036425600010A14894EF2C5352EBCFF000000010A14";
+		//final String keystoreAlias="devicemgl172905225036425600010A14894EF2C5352EBCFF000000010A14";
+        final String keystoreAlias=readAlias();
         
         
 		Log.d(TAG, "loadFromKeystore().threadPool.submit()");
