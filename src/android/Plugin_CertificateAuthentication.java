@@ -97,17 +97,16 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                 //}
             //});
             
-            try {
-            new Thread(new Runnable() {
+            
+           new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(TAG, "loadFromKeystore().run()");
-                    kcCallback.alias(keystoreAlias);
-                }
-            }).start();
-            } catch (Exception ex) {
-                Log.e(TAG,"Exception ex: "+ex.toString,ex);
+                        Log.d(TAG, "loadFromKeystore().run()");
+                        kcCallback.alias(keystoreAlias);
             }
+            }).start();
+
+
             
         } else {
 			Log.d(TAG, "loadFromKeystore().choosePrivateKeyAlias with " + keystoreAlias);
