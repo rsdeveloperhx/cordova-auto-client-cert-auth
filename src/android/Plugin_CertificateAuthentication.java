@@ -65,7 +65,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                 }
             });
         } else {
-			Log.d(TAG, "loadFromKeystore().choosePrivateKeyAlias");
+			Log.d(TAG, "loadFromKeystore().choosePrivateKeyAlias with " + keystoreAlias);
             KeyChain.choosePrivateKeyAlias(cordova.getActivity(), kcCallback
 			                              ,new String[]{"RSA"}, null
 										  ,request.getHost(), request.getPort(), null);
