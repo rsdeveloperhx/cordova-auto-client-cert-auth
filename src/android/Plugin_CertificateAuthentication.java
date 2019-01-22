@@ -33,7 +33,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public boolean onReceivedClientCertRequest(CordovaWebView view, ICordovaClientCertRequest request) {
-        Log.d(TAG, "Test Version 0.0.6");
+        Log.d(TAG, "Test Version 0.0.7");
         if (_certArr == null || _privKey == null) {
 			Log.d(TAG, "onReceivedClientCertRequest().loadFromKeystore:  _certArr: " + _certArr + " / _privKey=" + _privKey);
             loadFromKeystore(request);
@@ -88,14 +88,24 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 		Log.d(TAG, "loadFromKeystore().threadPool.submit()");
 
         if (keystoreAlias != null) {
-			    ExecutorService threadPool = cordova.getThreadPool();
-				threadPool.submit(new Runnable() {
+			    //ExecutorService threadPool = cordova.getThreadPool();
+				//threadPool.submit(new Runnable() {
+                //@Override
+                //public void run() {
+				//	Log.d(TAG, "loadFromKeystore().run()");
+                //    kcCallback.alias(keystoreAlias);
+                //}
+            //});
+            
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
-					Log.d(TAG, "loadFromKeystore().run()");
+                    Log.d(TAG, "loadFromKeystore().run()");
                     kcCallback.alias(keystoreAlias);
                 }
-            });
+            }).start();
+            
+            
         } else {
 			Log.d(TAG, "loadFromKeystore().choosePrivateKeyAlias with " + keystoreAlias);
             KeyChain.choosePrivateKeyAlias(cordova.getActivity(), kcCallback
