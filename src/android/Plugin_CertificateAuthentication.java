@@ -31,10 +31,10 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     @Override
     public boolean onReceivedClientCertRequest(CordovaWebView view, ICordovaClientCertRequest request) {
         if (_certArr == null || _privKey == null) {
-			Log.d(TAG, "onReceivedClientCertRequest().loadFromKeystore:  _certArr: " + _certArr + " / _privKey" + _privKey);
+			Log.d(TAG, "onReceivedClientCertRequest().loadFromKeystore:  _certArr: " + _certArr + " / _privKey=" + _privKey);
             loadFromKeystore(request);
         } else {
-			Log.d(TAG, "onReceivedClientCertRequest().requestProceed:  _certArr: " + _certArr + " / _privKey" + _privKey);
+			Log.d(TAG, "onReceivedClientCertRequest().requestProceed:  _certArr: " + _certArr + " / _privKey=" + _privKey);
             requestProceed(request);
         }
         return true;
@@ -50,7 +50,9 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
      	
 		//todo: read pattern from file based settings
 		final KeyChainAliasCallback kcCallback = new KeyChainAliasCallbackImpl(cordova.getActivity(), request);
-		final String keystoreAlias="devicemgl172155225084355600010359E7981339285E5D1F000000010359";
+		//final String keystoreAlias="devicemgl172155225084355600010359E7981339285E5D1F000000010359";
+        final String keystoreAlias="device-mgl-17290522503642";
+        
 		Log.d(TAG, "loadFromKeystore().threadPool.submit()");
 
         if (keystoreAlias != null) {
