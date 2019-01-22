@@ -87,9 +87,10 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
         @Override
         public void alias(String keystoreAlias) {
-			Log.d(TAG, "KeyChainAliasCallbackImpl.alias()");
+			Log.d(TAG, "KeyChainAliasCallbackImpl.alias() keystoreAlias=" + keystoreAlias);
             try {
                 if (keystoreAlias != null) {
+                    Log.d(TAG, "getPrivateKey (if)");
                     PrivateKey pk = KeyChain.getPrivateKey(_ctx, keystoreAlias);
 					Log.d(TAG, "PrivateKey="+pk.toString());
 					
@@ -102,9 +103,9 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                     _request.proceed(null, null);
                 }
             } catch (Exception ex) {
-                String txt = "Cannot load certificates. Exception="+ex.toString();
-                Toast.makeText(_ctx, txt, Toast.LENGTH_SHORT).show();
+                String txt = "alias() Cannot load certificates. Exception="+ex.toString();
                 Log.e(TAG, txt, ex);
+                Toast.makeText(_ctx, txt, Toast.LENGTH_SHORT).show();
             }
         }
     };
