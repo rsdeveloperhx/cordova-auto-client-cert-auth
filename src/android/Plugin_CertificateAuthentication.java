@@ -83,24 +83,32 @@ public class ClientCertificateAuthentication extends CordovaPlugin {
         @Override
         public void alias(String alias) {
             try {
+                SharedPreferences.Editor edt = mPreferences.edit();
+
                 if (alias != null) {
-                    SharedPreferences.Editor edt = mPreferences.edit();
                     edt.putString(SP_KEY_ALIAS, alias);
                     edt.apply();
                     PrivateKey pk = KeyChain.getPrivateKey(mContext, alias);
                     X509Certificate[] cert = KeyChain.getCertificateChain(mContext, alias);
                     mRequest.proceed(pk, cert);
                 } else {
+                    edt.putString(SP_KEY_ALIAS, null);
+                    edt.apply();
                     mRequest.proceed(null, null);
                 }
             } catch (KeyChainException e) {
                 String errorText = "Failed to load certificates";
                 Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, errorText, e);
+                edt.putString(SP_KEY_ALIAS, null);
+                edt.apply();
+
             } catch (InterruptedException e) {
                 String errorText = "InterruptedException while loading certificates";
                 Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, errorText, e);
+                edt.putString(SP_KEY_ALIAS, null);
+                edt.apply();
             }
         }
     }
