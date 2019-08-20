@@ -86,12 +86,14 @@ public class ClientCertificateAuthentication extends CordovaPlugin {
                 SharedPreferences.Editor edt = mPreferences.edit();
 
                 if (alias != null) {
+                    Log.d(TAG, "store cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, alias);
                     edt.apply();
                     PrivateKey pk = KeyChain.getPrivateKey(mContext, alias);
                     X509Certificate[] cert = KeyChain.getCertificateChain(mContext, alias);
                     mRequest.proceed(pk, cert);
                 } else {
+                    Log.d(TAG, "remove cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, null);
                     edt.apply();
                     mRequest.proceed(null, null);
@@ -100,6 +102,7 @@ public class ClientCertificateAuthentication extends CordovaPlugin {
                 String errorText = "Failed to load certificates";
                 Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, errorText, e);
+                Log.d(TAG, "remove cert binding. alias="+alias);
                 edt.putString(SP_KEY_ALIAS, null);
                 edt.apply();
 
@@ -107,6 +110,7 @@ public class ClientCertificateAuthentication extends CordovaPlugin {
                 String errorText = "InterruptedException while loading certificates";
                 Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, errorText, e);
+                Log.d(TAG, "remove cert binding. alias="+alias);
                 edt.putString(SP_KEY_ALIAS, null);
                 edt.apply();
             }
