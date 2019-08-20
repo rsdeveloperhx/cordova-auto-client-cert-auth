@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class Plugin_ClientCertificateAuthentication extends CordovaPlugin {
+public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
 
     public static final String SP_KEY_ALIAS = "SP_KEY_ALIAS";
