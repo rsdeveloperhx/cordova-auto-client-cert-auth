@@ -82,9 +82,9 @@ public class Plugin_ClientCertificateAuthentication extends CordovaPlugin {
 
         @Override
         public void alias(String alias) {
-            try {
-                SharedPreferences.Editor edt = mPreferences.edit();
+            SharedPreferences.Editor edt = mPreferences.edit();
 
+            try {
                 if (alias != null) {
                     Log.d(TAG, "store cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, alias);
