@@ -1,183 +1,114 @@
 package ch.migros.plugin;
 
-import android.os.Handler;
-import android.os.Looper;
-
-import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CordovaWebView;
-import org.apache.cordova.ICordovaClientCertRequest;
-
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.security.KeyChain;
 import android.security.KeyChainAliasCallback;
 import android.security.KeyChainException;
 import android.util.Log;
 import android.widget.Toast;
-import android.preference.PreferenceManager;
-import android.content.SharedPreferences;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.ICordovaClientCertRequest;
 
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.ExecutorService;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 
-public class Plugin_CertificateAuthentication extends CordovaPlugin {
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+public class ClientCertificateAuthentication extends CordovaPlugin {
 
-	private static final String TAG = Plugin_CertificateAuthentication.class.getName();
 
-	private X509Certificate[] _certArr;
-    private PrivateKey        _privKey;
-    private String            _alias;
-    
+    public static final String SP_KEY_ALIAS = "SP_KEY_ALIAS";
+    public static final String TAG = "client-cert-auth";
+
+    X509Certificate[] mCertificates;
+    PrivateKey mPrivateKey;
+    String mAlias;
+
 
     @Override
+    public Boolean shouldAllowBridgeAccess(String url) {
+        return super.shouldAllowBridgeAccess(url);
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
     public boolean onReceivedClientCertRequest(CordovaWebView view, ICordovaClientCertRequest request) {
-        Log.d(TAG, "Test Version 0.0.10");
-        if (_certArr == null || _privKey == null) {
-			Log.d(TAG, "onReceivedClientCertRequest().loadFromKeystore:  _certArr: " + _certArr + " / _privKey=" + _privKey);
-            loadFromKeystore(request);
+        if (mCertificates == null || mPrivateKey == null) {
+            loadKeys(request);
         } else {
-			Log.d(TAG, "onReceivedClientCertRequest().requestProceed:  _certArr: " + _certArr + " / _privKey=" + _privKey);
-            requestProceed(request);
+            proceedRequers(request);
         }
         return true;
     }
 
-	
-    public void requestProceed(ICordovaClientCertRequest request) {
-		Log.d(TAG, "onReceivedClientCertRequest().requestProceed()");
-        request.proceed(_privKey, _certArr);
-    }
-	
-    /*
-     * Read Alias form MDM stored file
-     * Simply read one entry as plaintext
-     */
-    private String readAlias() {
-        String alias = null;
-        File f = null;
-        BufferedReader b = null;
-        try {
-            f = new File("/enterprise/usr/mgb/reverseproxy_cert_alias.txt");
-            b = new BufferedReader(new FileReader(f));
-            String readLine = readLine = b.readLine();
-            if (readLine != null) {
-                alias = readLine;
-                Log.d(TAG, "readAlias: "+alias);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "readAlias: Exception caught. " + e.toString(), e);
-        } finally {
-            try {
-                b.close();
-            } catch (Exception silent) {
-            }
-        }
-        return alias;
-    }
-	
-    private void loadFromKeystore(ICordovaClientCertRequest request) {
-     	
-		//todo: read pattern from file based settings
-		final KeyChainAliasCallback kcCallback = new KeyChainAliasCallbackImpl(cordova.getActivity(), request);
-		final String keystoreAlias="devicemgl172905225036425600010A14894EF2C5352EBCFF000000010A14";
-       // final String keystoreAlias=readAlias();
-        
-        
-		Log.d(TAG, "loadFromKeystore().threadPool.submit()");
+    private void loadKeys(ICordovaClientCertRequest request) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(cordova.getActivity());
+        final KeyChainAliasCallback callback = new AliasCallback(cordova.getActivity(), request);
+        final String alias = sp.getString(SP_KEY_ALIAS, null);
 
-        if (keystoreAlias != null) {
-			    //ExecutorService threadPool = cordova.getThreadPool();
-				//threadPool.submit(new Runnable() {
-                //@Override
-                //public void run() {
-				//	Log.d(TAG, "loadFromKeystore().run()");
-                //    kcCallback.alias(keystoreAlias);
-                //}
-            //});
-            
-           /*run from main thread, not allowed (risk of deadlock) 
-           new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Log.d(TAG, "loadFromKeystore().run()");
-                            kcCallback.alias(keystoreAlias);
-                        }
-                    });
-            }
-            }).start();
-           */
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    kcCallback.alias(keystoreAlias);
-                }
-            }).start();
-            
+        if (alias == null) {
+            KeyChain.choosePrivateKeyAlias(cordova.getActivity(), callback, new String[]{"RSA"}, null, request.getHost(), request.getPort(), null);
         } else {
-			Log.d(TAG, "loadFromKeystore().choosePrivateKeyAlias with " + keystoreAlias);
-            KeyChain.choosePrivateKeyAlias(cordova.getActivity(), kcCallback
-			                              ,new String[]{"RSA"}, null
-										  ,request.getHost(), request.getPort(), null);
+            ExecutorService threadPool = cordova.getThreadPool();
+            threadPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    callback.alias(alias);
+                }
+            });
         }
     }
 
 
-	/**
-	 * Convenience Methode für das Starten von Runnables
-	 * auf dem UI Thread aus Background Threads
-	 * @param r
-	 */
-	public static void runOnUiThread(Runnable r) {
-		//check added@20160907: when the current thread is already the ui thread, do not post but call directly run.
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-			r.run();
-		} else {
-			Handler handler = new Handler(Looper.getMainLooper());
-			handler.post(r);
-		}
-	}
+    static class AliasCallback implements KeyChainAliasCallback {
 
-    static class KeyChainAliasCallbackImpl implements KeyChainAliasCallback {
 
-        private final Context _ctx;
-		private final SharedPreferences _sharedPrefs;
-        private final ICordovaClientCertRequest _request;
+        private final SharedPreferences mPreferences;
+        private final ICordovaClientCertRequest mRequest;
+        private final Context mContext;
 
-        public KeyChainAliasCallbackImpl(Context context, ICordovaClientCertRequest request) {
-            _ctx = context;
-            _request = request;
-            _sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_ctx);
+        public AliasCallback(Context context, ICordovaClientCertRequest request) {
+            mRequest = request;
+            mContext = context;
+            mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         }
 
         @Override
-        public void alias(String keystoreAlias) {
-			Log.d(TAG, "KeyChainAliasCallbackImpl.alias() keystoreAlias=" + keystoreAlias);
+        public void alias(String alias) {
             try {
-                if (keystoreAlias != null) {
-                    Log.d(TAG, "getPrivateKey (if)");
-                    PrivateKey pk = KeyChain.getPrivateKey(_ctx, keystoreAlias);
-					Log.d(TAG, "PrivateKey="+pk.toString());
-					
-                    X509Certificate[] cert = KeyChain.getCertificateChain(_ctx, keystoreAlias);
-					Log.d(TAG, "X509Certificate="+cert.toString());
-					Log.d(TAG, "alias.proceed (if)");
-                    _request.proceed(pk, cert);
+                if (alias != null) {
+                    SharedPreferences.Editor edt = mPreferences.edit();
+                    edt.putString(SP_KEY_ALIAS, alias);
+                    edt.apply();
+                    PrivateKey pk = KeyChain.getPrivateKey(mContext, alias);
+                    X509Certificate[] cert = KeyChain.getCertificateChain(mContext, alias);
+                    mRequest.proceed(pk, cert);
                 } else {
-					Log.d(TAG, "alias.proceed (else)");
-                    _request.proceed(null, null);
+                    mRequest.proceed(null, null);
                 }
-            } catch (Exception ex) {
-                String txt = "alias() Cannot load certificates. Exception="+ex.toString();
-                Log.e(TAG, txt, ex);
-               
+            } catch (KeyChainException e) {
+                String errorText = "Failed to load certificates";
+                Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, errorText, e);
+            } catch (InterruptedException e) {
+                String errorText = "InterruptedException while loading certificates";
+                Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, errorText, e);
             }
         }
-    };
+    }
+
+    ;
+
+
+    public void proceedRequers(ICordovaClientCertRequest request) {
+        request.proceed(mPrivateKey, mCertificates);
+    }
 }
