@@ -93,15 +93,19 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         @Override
         public void alias(String alias) {
             SharedPreferences.Editor edt = mPreferences.edit();
-
+Log.d(TAG, "AliasCallback.alias: STEP 01");
             try {
+Log.d(TAG, "AliasCallback.alias: STEP 02");
                 if (alias != null) {
+Log.d(TAG, "AliasCallback.alias: STEP 03");
                     Log.d(TAG, "AliasCallback.alias: store cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, alias);
                     edt.apply();
+Log.d(TAG, "AliasCallback.alias: STEP 04");
                     PrivateKey pk = KeyChain.getPrivateKey(mContext, alias);
+Log.d(TAG, "AliasCallback.alias: STEP 05");                    
                     X509Certificate[] cert = KeyChain.getCertificateChain(mContext, alias);
-                    
+Log.d(TAG, "AliasCallback.alias: STEP 06");                    
                     //----TEST----
                     Log.d(TAG, "cert.length(): "+cert.length);
 
@@ -111,29 +115,36 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                         Log.d(TAG, "getNotAfter: "+c.getNotAfter());
                         Log.d(TAG, "getSubjectDN().getName(): "+c.getSubjectDN().getName());
                         Log.d(TAG, "getIssuerX500Principal().getName(): "+c.getIssuerX500Principal().getName());
-
+Log.d(TAG, "AliasCallback.alias: STEP 07");
                         try {
+                            Log.d(TAG, "AliasCallback.alias: STEP 08");
                             c.checkValidity();
+                            Log.d(TAG, "AliasCallback.alias: STEP 09");
                         } catch (Exception e) {
                             Log.d(TAG, "check validity="+ e.toString());
                         }
                     }
                     //-----ENDE------
                     if (cert.length>0) {
+                        Log.d(TAG, "AliasCallback.alias: STEP 10");
                         mRequest.proceed(pk, cert);
                     } else {
+                        Log.d(TAG, "AliasCallback.alias: STEP 11");
                         Log.d(TAG, "AliasCallback.alias: remove cert binding. alias="+alias);
                         edt.putString(SP_KEY_ALIAS, null);
                         edt.apply();
+                        Log.d(TAG, "AliasCallback.alias: STEP 12");
                         mRequest.proceed(null, null);
                     }
                 } else {
+                    Log.d(TAG, "AliasCallback.alias: STEP 13");
                     Log.d(TAG, "AliasCallback.alias: remove cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, null);
                     edt.apply();
                     mRequest.proceed(null, null);
                 }
             } catch (KeyChainException e) {
+                Log.d(TAG, "AliasCallback.alias: STEP 14");
                 String errorText = "AliasCallback.alias: Failed to load certificates";
               //  Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, errorText + " "+ e.toString(), e);
@@ -142,6 +153,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                 edt.apply();
 
             } catch (InterruptedException e) {
+                Log.d(TAG, "AliasCallback.alias: STEP 15");
                 String errorText = "AliasCallback.alias: InterruptedException while loading certificates";
               //  Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, errorText + " "+ e.toString(), e);
@@ -156,6 +168,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
 
     public void proceedRequers(ICordovaClientCertRequest request) {
+Log.d(TAG, "AliasCallback.alias: STEP 16");
         Log.d(TAG, "proceedRequers() mPrivateKey="+mPrivateKey + " mCertificates="+mCertificates);
         request.proceed(mPrivateKey, mCertificates);
     }
