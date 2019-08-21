@@ -52,7 +52,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         return true;
     }
 
-    private static ThreadPool s_threadPool=null;
+    private static ExecutorService  s_threadPool=null;
     private static Cordova s_cordova=null;
 
     private void loadKeys(ICordovaClientCertRequest request) {
