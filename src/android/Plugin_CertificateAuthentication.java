@@ -33,7 +33,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public Boolean shouldAllowBridgeAccess(String url) {
-        Log.d(TAG, shouldAllowBridgeAccess url="+url);
+        Log.d(TAG, "shouldAllowBridgeAccess url="+url);
         return super.shouldAllowBridgeAccess(url);
     }
 
