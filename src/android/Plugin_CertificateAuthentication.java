@@ -100,6 +100,23 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                     edt.apply();
                     PrivateKey pk = KeyChain.getPrivateKey(mContext, alias);
                     X509Certificate[] cert = KeyChain.getCertificateChain(mContext, alias);
+                    
+                    //----TEST----
+                    for (X509Certificate c:cert) {
+                        Log.d(TAG, "getSerialNumber: "+c.getSerialNumber());
+                        Log.d(TAG, "getNotBefore: "+c.getNotBefore());
+                        Log.d(TAG, "getNotAfter: "+c.getNotAfter());
+                        Log.d(TAG, "getSubjectDN().getName(): "+c.getSubjectDN().getName());
+                        Log.d(TAG, "getIssuerX500Principal().getName(): "+c.getIssuerX500Principal().getName());
+
+                        try {
+                            c.checkValidity();
+                        } catch (Exception e) {
+                            Log.d(TAG, "check validity="+ e.toString());
+                        }
+                    }
+                    //-----ENDE------
+                    
                     mRequest.proceed(pk, cert);
                 } else {
                     Log.d(TAG, "AliasCallback.alias: remove cert binding. alias="+alias);
