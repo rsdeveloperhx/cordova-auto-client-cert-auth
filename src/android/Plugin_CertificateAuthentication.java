@@ -33,7 +33,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public Boolean shouldAllowBridgeAccess(String url) {
-        Log.d(TAG, "PlugTest 12, shouldAllowBridgeAccess url="+url);
+        Log.d(TAG, "PlugTest 13, shouldAllowBridgeAccess url="+url);
         return super.shouldAllowBridgeAccess(url);
     }
 
@@ -52,8 +52,13 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         return true;
     }
 
+    private static s_threadPool=null;
+    private static s_cordova=null;
 
     private void loadKeys(ICordovaClientCertRequest request) {
+        s_cordova = cordova;
+        s_threadPool = cordova.getThreadPool();
+
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(cordova.getActivity());
         final KeyChainAliasCallback callback = new AliasCallback(cordova.getActivity(), request);
         final String alias = sp.getString(SP_KEY_ALIAS, null);
@@ -64,8 +69,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
             Log.d(TAG, "call KeyChain.choosePrivateKeyAlias");
             KeyChain.choosePrivateKeyAlias(cordova.getActivity(), callback, new String[]{"RSA"}, null, request.getHost(), request.getPort(), null);
         } else {
-            ExecutorService threadPool = cordova.getThreadPool();
-            threadPool.submit(new Runnable() {
+            s_threadPool.submit(new Runnable() {
                 @Override
                 public void run() {
                     Log.d(TAG, "callback.alias for alias="+alias);
@@ -165,13 +169,12 @@ Log.d(TAG, "AliasCallback.alias: STEP 07");
         }
         
         public void certError(final String alias) {
-          cordova.getActivity().runOnUiThread(new Runnable() {
+            s_cordova.runOnUiThread(new Runnable() {
             public void run() {
                 try {
                     Toast.makeText(mContext, "Certificate not accessible. Please conact your System Administrator. App will be terminated now. Alias=" + alias, Toast.LENGTH_LONG).show();
  
-                    ExecutorService threadPool = cordova.getThreadPool();
-                    threadPool.submit(new Runnable() {
+                    s_threadPool.submit(new Runnable() {
                         @Override
                         public void run() {
                             try {Thread.sleep(5000);} catch (Exception ex){};
@@ -180,7 +183,7 @@ Log.d(TAG, "AliasCallback.alias: STEP 07");
                     });
 
                 } catch (Exception ex) {
-                    Log.e(TAG, ex.toString(), e);
+                    Log.e(TAG, ex.toString(), ex);
                 }
                 
             }
