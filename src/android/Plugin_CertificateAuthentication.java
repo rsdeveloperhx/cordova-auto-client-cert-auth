@@ -33,7 +33,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public Boolean shouldAllowBridgeAccess(String url) {
-        Log.d(TAG, "shouldAllowBridgeAccess url="+url);
+        Log.d(TAG, "PlugTest 10, shouldAllowBridgeAccess url="+url);
         return super.shouldAllowBridgeAccess(url);
     }
 
@@ -102,6 +102,8 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                     X509Certificate[] cert = KeyChain.getCertificateChain(mContext, alias);
                     
                     //----TEST----
+                    Log.d(TAG, "cert.length(): "+cert.length);
+
                     for (X509Certificate c:cert) {
                         Log.d(TAG, "getSerialNumber: "+c.getSerialNumber());
                         Log.d(TAG, "getNotBefore: "+c.getNotBefore());
@@ -116,8 +118,14 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                         }
                     }
                     //-----ENDE------
-                    
-                    mRequest.proceed(pk, cert);
+                    if (cert.length>0) {
+                        mRequest.proceed(pk, cert);
+                    } else {
+                        Log.d(TAG, "AliasCallback.alias: remove cert binding. alias="+alias);
+                        edt.putString(SP_KEY_ALIAS, null);
+                        edt.apply();
+                        mRequest.proceed(null, null);
+                    }
                 } else {
                     Log.d(TAG, "AliasCallback.alias: remove cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, null);
