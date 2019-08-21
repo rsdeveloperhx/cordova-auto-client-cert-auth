@@ -30,6 +30,14 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     PrivateKey mPrivateKey;
     String mAlias;
 
+    private static ExecutorService  s_threadPool=null;
+    private static Cordova s_cordova=null;
+
+    @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+        s_cordova=cordova;
+    }
 
     @Override
     public Boolean shouldAllowBridgeAccess(String url) {
@@ -52,8 +60,6 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         return true;
     }
 
-    private static ExecutorService  s_threadPool=null;
-    private static Cordova s_cordova=null;
 
     private void loadKeys(ICordovaClientCertRequest request) {
         s_cordova = cordova;
