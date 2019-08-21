@@ -151,7 +151,7 @@ Log.d(TAG, "AliasCallback.alias: STEP 07");
                 Log.d(TAG, "remove cert binding. alias="+alias);
                 edt.putString(SP_KEY_ALIAS, null);
                 edt.apply();
-
+                certError(alias);
             } catch (InterruptedException e) {
                 Log.d(TAG, "AliasCallback.alias: STEP 15");
                 String errorText = "AliasCallback.alias: InterruptedException while loading certificates";
@@ -160,12 +160,35 @@ Log.d(TAG, "AliasCallback.alias: STEP 07");
                 Log.d(TAG, "remove cert binding. alias="+alias);
                 edt.putString(SP_KEY_ALIAS, null);
                 edt.apply();
+                certError(alias);
             }
+        }
+        
+        public void certError(final String alias) {
+          cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    Toast.makeText(mContext, "Certificate not accessible. Please conact your System Administrator. App will be terminated now. Alias=" + alias, Toast.LENGTH_LONG).show();
+ 
+                    ExecutorService threadPool = cordova.getThreadPool();
+                    threadPool.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {Thread.sleep(5000);} catch (Exception ex){};
+                            System.exit(1);
+                        }
+                    });
+
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.toString(), e);
+                }
+                
+            }
+           });
         }
     }
 
-    ;
-
+    
 
     public void proceedRequers(ICordovaClientCertRequest request) {
 Log.d(TAG, "AliasCallback.alias: STEP 16");
