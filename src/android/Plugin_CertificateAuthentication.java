@@ -33,6 +33,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public Boolean shouldAllowBridgeAccess(String url) {
+        Log.d(TAG, shouldAllowBridgeAccess url="+url);
         return super.shouldAllowBridgeAccess(url);
     }
 
@@ -40,9 +41,12 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public boolean onReceivedClientCertRequest(CordovaWebView view, ICordovaClientCertRequest request) {
+        
         if (mCertificates == null || mPrivateKey == null) {
+            Log.d(TAG, "onReceivedClientCertRequest -> loadKeys()");
             loadKeys(request);
         } else {
+            Log.d(TAG, "onReceivedClientCertRequest -> proceedRequers()");
             proceedRequers(request);
         }
         return true;
@@ -53,13 +57,17 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         final KeyChainAliasCallback callback = new AliasCallback(cordova.getActivity(), request);
         final String alias = sp.getString(SP_KEY_ALIAS, null);
 
+        Log.d(TAG, "loadKeys(), alias="+alias);
+
         if (alias == null) {
+            Log.d(TAG, "call KeyChain.choosePrivateKeyAlias");
             KeyChain.choosePrivateKeyAlias(cordova.getActivity(), callback, new String[]{"RSA"}, null, request.getHost(), request.getPort(), null);
         } else {
             ExecutorService threadPool = cordova.getThreadPool();
             threadPool.submit(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d(TAG, "callback.alias for alias="+alias);
                     callback.alias(alias);
                 }
             });
@@ -75,6 +83,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         private final Context mContext;
 
         public AliasCallback(Context context, ICordovaClientCertRequest request) {
+            Log.d(TAG, "AliasCallback constructor");
             mRequest = request;
             mContext = context;
             mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -86,20 +95,20 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
             try {
                 if (alias != null) {
-                    Log.d(TAG, "store cert binding. alias="+alias);
+                    Log.d(TAG, "AliasCallback.alias: store cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, alias);
                     edt.apply();
                     PrivateKey pk = KeyChain.getPrivateKey(mContext, alias);
                     X509Certificate[] cert = KeyChain.getCertificateChain(mContext, alias);
                     mRequest.proceed(pk, cert);
                 } else {
-                    Log.d(TAG, "remove cert binding. alias="+alias);
+                    Log.d(TAG, "AliasCallback.alias: remove cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, null);
                     edt.apply();
                     mRequest.proceed(null, null);
                 }
             } catch (KeyChainException e) {
-                String errorText = "Failed to load certificates";
+                String errorText = "AliasCallback.alias: Failed to load certificates";
                 Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, errorText, e);
                 Log.d(TAG, "remove cert binding. alias="+alias);
@@ -107,7 +116,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                 edt.apply();
 
             } catch (InterruptedException e) {
-                String errorText = "InterruptedException while loading certificates";
+                String errorText = "AliasCallback.alias: InterruptedException while loading certificates";
                 Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
                 Log.e(TAG, errorText, e);
                 Log.d(TAG, "remove cert binding. alias="+alias);
@@ -121,6 +130,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
 
     public void proceedRequers(ICordovaClientCertRequest request) {
+        Log.d(TAG, "proceedRequers() mPrivateKey="+mPrivateKey + " mCertificates="+mCertificates);
         request.proceed(mPrivateKey, mCertificates);
     }
 }
