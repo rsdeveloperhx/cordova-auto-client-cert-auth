@@ -33,7 +33,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
 
     @Override
     public Boolean shouldAllowBridgeAccess(String url) {
-        Log.d(TAG, "PlugTest 10, shouldAllowBridgeAccess url="+url);
+        Log.d(TAG, "PlugTest 11, shouldAllowBridgeAccess url="+url);
         return super.shouldAllowBridgeAccess(url);
     }
 
@@ -51,6 +51,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
         }
         return true;
     }
+
 
     private void loadKeys(ICordovaClientCertRequest request) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(cordova.getActivity());
@@ -134,16 +135,16 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
                 }
             } catch (KeyChainException e) {
                 String errorText = "AliasCallback.alias: Failed to load certificates";
-                Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, errorText, e);
+              //  Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, errorText + " "+ e.toString(), e);
                 Log.d(TAG, "remove cert binding. alias="+alias);
                 edt.putString(SP_KEY_ALIAS, null);
                 edt.apply();
 
             } catch (InterruptedException e) {
                 String errorText = "AliasCallback.alias: InterruptedException while loading certificates";
-                Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, errorText, e);
+              //  Toast.makeText(mContext, errorText, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, errorText + " "+ e.toString(), e);
                 Log.d(TAG, "remove cert binding. alias="+alias);
                 edt.putString(SP_KEY_ALIAS, null);
                 edt.apply();
