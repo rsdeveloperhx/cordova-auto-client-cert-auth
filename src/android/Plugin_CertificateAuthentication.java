@@ -176,7 +176,7 @@ Log.d(TAG, "AliasCallback.alias: STEP 07");
         }
         
         public void certError(final String alias) {
-            s_cordova.runOnUiThread(new Runnable() {
+            s_cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 try {
                     Toast.makeText(mContext, "Certificate not accessible. Please conact your System Administrator. App will be terminated now. Alias=" + alias, Toast.LENGTH_LONG).show();
