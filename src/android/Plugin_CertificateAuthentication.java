@@ -31,7 +31,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     String mAlias;
 
     private static ExecutorService  s_threadPool=null;
-    private static Cordova s_cordova=null;
+    private static CordovaInterface s_cordova=null;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
