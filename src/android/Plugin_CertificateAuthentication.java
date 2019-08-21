@@ -109,9 +109,6 @@ Log.d(TAG, "AliasCallback.alias: STEP 01");
 Log.d(TAG, "AliasCallback.alias: STEP 02");
                 if (alias != null) {
 Log.d(TAG, "AliasCallback.alias: STEP 03");
-                    Log.d(TAG, "AliasCallback.alias: store cert binding. alias="+alias);
-                    edt.putString(SP_KEY_ALIAS, alias);
-                    edt.apply();
 Log.d(TAG, "AliasCallback.alias: STEP 04");
                     PrivateKey pk = KeyChain.getPrivateKey(mContext, alias);
 Log.d(TAG, "AliasCallback.alias: STEP 05");                    
@@ -119,6 +116,10 @@ Log.d(TAG, "AliasCallback.alias: STEP 05");
 Log.d(TAG, "AliasCallback.alias: STEP 06");                    
                     //----TEST----
                     Log.d(TAG, "cert.length(): "+cert.length);
+
+                    Log.d(TAG, "AliasCallback.alias: store cert binding. alias="+alias);
+                    edt.putString(SP_KEY_ALIAS, alias);
+                    edt.apply();
 
                     for (X509Certificate c:cert) {
                         Log.d(TAG, "getSerialNumber: "+c.getSerialNumber());
