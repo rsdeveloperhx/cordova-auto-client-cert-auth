@@ -1,0 +1,28 @@
+{
+	"name": "cordova-auto-client-cert-auth",
+	"version": "1.0.0",
+	"description": "SSL cert authentication with configurable certificate autoselection of a certificate from the key store.",
+	"cordova": {
+		"id": "cordova-auto-client-cert-auth",
+		"platforms": [
+		  "android"
+		]
+	  },
+	"main": "www/index.js",
+	"scripts": {
+	"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rsdeveloperhx/cordova-auto-client-cert-auth"
+	},
+	"keywords": [ "ecosystem:cordova",  "cordova-android", "cordova-auto-client-cert-auth"],
+	"author": {
+		"name": "hong.xin@mgb.ch"
+	},
+	"license": "MIT",
+	"bugs": {
+	"url": "https://github.com/rsdeveloperhx/cordova-auto-close-app/issues"
+	},
+	"homepage": "https://github.com/rsdeveloperhx/cordova-auto-close-app#readme"
+}
