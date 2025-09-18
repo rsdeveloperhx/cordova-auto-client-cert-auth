@@ -1,22 +1,34 @@
 package ch.migros.plugin;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.security.KeyChain;
 import android.security.KeyChainAliasCallback;
 import android.security.KeyChainException;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.ICordovaClientCertRequest;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.security.PrivateKey;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 
 
@@ -37,9 +49,72 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        s_cordova=cordova;
+        s_cordova = cordova;
+        s_threadPool = cordova.getThreadPool();
     }
 
+    @Override
+    public boolean execute(final String action, final JSONArray data, final CallbackContext callbackContext) throws JSONException {
+        if (action.equalsIgnoreCase("clearCertificateBinding")) {
+            clearCertificateBinding();
+            callbackContext.success();
+            return true;
+        } else if (action.equalsIgnoreCase("clearCacheAndTerminateApp")) {
+            clearCacheAndTerminateApp();
+            callbackContext.success();
+            return true;
+        } else if (action.equalsIgnoreCase("terminateApp")) {
+            terminateApp();
+            callbackContext.success();
+            return true;
+        }
+        return false;
+    }
+
+    private void clearCacheAndTerminateApp() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                webView.clearCache(true);
+                // webView.clearFormData();
+                //webView.clearMatches();
+                //webView.clearSslPreferences();
+                webView.clearHistory();
+                //   AppStorage.clearCookies(webView.getOriginalUrl());
+                //  AppStorage.clearCookies(webView.getUrl());
+                boolean result = ((ActivityManager) s_cordova.getContext().getSystemService(Context.ACTIVITY_SERVICE)).clearApplicationUserData();
+                terminateApp();
+            }
+        });
+
+    }
+
+    private static void terminateApp() {
+        System.exit(0);
+    }
+
+    private static void clearCertificateBinding() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences( s_cordova.getContext() );;
+        SharedPreferences.Editor edt = sharedPrefs.edit();
+        edt.putString(SP_KEY_ALIAS, null);
+        edt.apply();
+    }
+
+    /**
+     * Convenience Methode für das Starten von Runnables
+     * auf dem UI Thread aus Background Threads
+     *
+     * @param r
+     */
+    public static void runOnUiThread(Runnable r) {
+        //check added@20160907: when the current thread is already the ui thread, do not post but call directly run.
+        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+            r.run();
+        } else {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(r);
+        }
+    }
     @Override
     public Boolean shouldAllowBridgeAccess(String url) {
         Log.d(TAG, "PlugTest 14, shouldAllowBridgeAccess url="+url);
@@ -62,19 +137,18 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
     }
 
 
-    private void loadKeys(ICordovaClientCertRequest request) {
-        s_cordova = cordova;
-        s_threadPool = cordova.getThreadPool();
+    private static void loadKeys(ICordovaClientCertRequest request) {
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(cordova.getActivity());
-        final KeyChainAliasCallback callback = new AliasCallback(cordova.getActivity(), request);
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(s_cordova.getActivity());
+        final KeyChainAliasCallback callback = new AliasCallback(s_cordova.getActivity(), request);
         final String alias = sp.getString(SP_KEY_ALIAS, null);
 
         Log.d(TAG, "loadKeys(), alias="+alias);
 
-        if (alias == null) {
+        if (alias == null)  {
             Log.d(TAG, "call KeyChain.choosePrivateKeyAlias");
-            KeyChain.choosePrivateKeyAlias(cordova.getActivity(), callback, new String[]{"RSA"}, null, request.getHost(), request.getPort(), null);
+            KeyChain.choosePrivateKeyAlias(s_cordova.getActivity(), callback, new String[]{"RSA"}, null, request.getHost(), request.getPort(), null);
         } else {
             s_threadPool.submit(new Runnable() {
                 @Override
@@ -117,11 +191,36 @@ Log.d(TAG, "AliasCallback.alias: STEP 06");
                     //----TEST----
                     Log.d(TAG, "cert.length(): "+cert.length);
 
+                    if (alias!=null && !alias.contains("devicemgl")) {
+                        showWarningWrongCert();
+                        return;
+                    }
+                    
                     Log.d(TAG, "AliasCallback.alias: store cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, alias);
                     edt.apply();
 
                     for (X509Certificate c:cert) {
+                        String name=c.getSubjectDN().getName();
+                        if (name.contains("device-mgl-")) {
+                            boolean isvalid=false;
+                            try {
+                                String s=new Date().toString();
+                                c.checkValidity();
+                                isvalid=true;
+                            } catch (CertificateExpiredException silent) {
+
+                            } catch (CertificateNotYetValidException silent) {
+
+                            }
+                            if (!isvalid) {
+                                clearCertificateBinding();
+                                showWarningExpiredCert();
+
+                                return;
+                            }
+                        }
+                        
                         Log.d(TAG, "getSerialNumber: "+c.getSerialNumber());
                         Log.d(TAG, "getNotBefore: "+c.getNotBefore());
                         Log.d(TAG, "getNotAfter: "+c.getNotAfter());
@@ -153,7 +252,8 @@ Log.d(TAG, "AliasCallback.alias: STEP 07");
                     Log.d(TAG, "AliasCallback.alias: remove cert binding. alias="+alias);
                     edt.putString(SP_KEY_ALIAS, null);
                     edt.apply();
-                    mRequest.proceed(null, null);
+                    // mRequest.proceed(null, null);
+                    showCertificateMustBeSelected();
                 }
             } catch (KeyChainException e) {
                 Log.d(TAG, "AliasCallback.alias: STEP 14");
@@ -175,7 +275,44 @@ Log.d(TAG, "AliasCallback.alias: STEP 07");
                 certError(alias);
             }
         }
-        
+
+        private void showWarningExpiredCert() {
+            showMessageBox("Certificate Warining","Certificate is expired. The app must be closed. Please choose another certificate after app restart.",true);
+        }
+
+        private void showWarningWrongCert() {
+            showMessageBox("Certificate Warining","Certificate is wrong. please choose a certificate starting with ´devicemgl´");
+        }
+
+        private void showCertificateMustBeSelected() {
+            showMessageBox("Certificate Warining","Certificate Dialog was closed with ´ablehnen´. please choose a certificate starting with ´devicemgl´");
+        }
+
+        private void showMessageBox(String title, String message) {
+            showMessageBox(title,message,false);
+        }
+        private void showMessageBox(String title, String message, final boolean shutdown) {
+            // Show the alert dialog on the UI thread
+            s_cordova.getActivity().runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(s_cordova.getActivity());
+                builder.setTitle(title);
+                builder.setMessage(message);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
+                        if (!shutdown)
+                            Plugin_CertificateAuthentication.loadKeys(mRequest);
+                        else
+                            terminateApp();
+                    }
+                });
+                builder.setCancelable(false); // Prevent dismissing by tapping outside
+                builder.show();
+            });
+        }
+
         public void certError(final String alias) {
             s_cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
