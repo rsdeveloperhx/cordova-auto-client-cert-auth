@@ -3,5 +3,5 @@
     <string name="certtitle">Erreur de certificat</string>
     <string name="certmsg1">La boîte de dialogue du certificat a été fermée en utilisant le bouton "REFUSER". Veuillez choisir un certificat dont le nom contient "devicemgl".</string>
     <string name="certmsg2">Le certificat est incorrect. Veuillez choisir un certificat commençant par "devicemgl".</string>
-    <string name="certmsg3">Le certificat a expiré. L'application doit être fermée. Veuillez choisir un autre certificat après avoir redémarré l'application.</string>
+    <string name="certmsg3">Le certificat a expiré. L&apos;application doit être fermée. Veuillez choisir un autre certificat après avoir redémarré l&apos;application.</string>
 </resources>
