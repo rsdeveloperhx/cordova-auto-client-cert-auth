@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-        id="cordova-auto-client-cert-auth"
-        version="1.0.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+		id="cordova-plugin-udid"
+		version="1.1.2">
 
   <name>Client auto certificate authentication</name>
-
+  <description>Cordova auto certificate authentication Plugin</description>
+  <license>MIT</license>
   <engines>
     <engine name="cordova" version=">=3.4.0"/>
   </engines>
-
-  
+ 
   <platform name="android">
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="Plugin_CertificateAuthentication">
@@ -18,6 +19,7 @@
       </feature>
     </config-file>
     <source-file src="src/android/Plugin_CertificateAuthentication.java" target-dir="src/ch/migros/plugin"/>
+    <resource-file src="src/android/res/values/strings.xml" target="app/src/main/res/values/Plugin_CertificateAuthentication_strings.xml" />
   </platform>
 
 </plugin>
