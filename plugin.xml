@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
 		id="cordova-auto-client-cert-auth"
-		version="1.1.7">
+		version="1.1.8">
 
   <name>Client auto certificate authentication</name>
   <description>Cordova auto certificate authentication Plugin</description>
@@ -20,6 +20,9 @@
     </config-file>
     <source-file src="src/android/Plugin_CertificateAuthentication.java" target-dir="src/ch/migros/plugin"/>
     <resource-file src="src/android/res/values/strings.xml" target="res/values/Plugin_CertificateAuthentication_strings.xml" />
+    <resource-file src="src/android/res/values-de/strings.xml" target="res/values-de/Plugin_CertificateAuthentication_strings.xml" />
+    <resource-file src="src/android/res/values-fr/strings.xml" target="res/values-fr/Plugin_CertificateAuthentication_strings.xml" />
+    <resource-file src="src/android/res/values-it/strings.xml" target="res/values-it/Plugin_CertificateAuthentication_strings.xml" />
   </platform>
 
 </plugin>
