@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="message_1">Certificate Error</string>
-    <string name="message_2">Do you really want to clear all cache? All offline data will be lost.</string>
-    <string name="message_3">Do you really want to delete all certificates? The app will close automatically.</string>
-    <string name="button_clear_cache">Clear Cache</string>
-    <string name="button_clear_cert">Clear Certificate</string>
-    <string name="button_close_app">Close App</string>
-    <string name="title_advanced_settings">Advanced Settings</string>
+    <string name="certtitle">Zertifikatsfehler</string>
+    <string name="certmsg1">Der Zertifikatsdialog wurde mit der Schaltfläche "ABLEHNEN" geschlossen. Bitte wählen Sie ein Zertifikat, dessen Name "devicemgl" enthält.</string>
+    <string name="certmsg2">Das Zertifikat ist ungültig. Bitte wählen Sie ein Zertifikat, das mit "devicemgl" beginnt.</string>
+    <string name="certmsg3">Das Zertifikat ist abgelaufen. Die App muss geschlossen werden. Bitte wählen Sie nach dem Neustart der App ein anderes Zertifikat aus.</string>
 </resources>
