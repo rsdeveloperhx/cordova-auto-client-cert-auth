@@ -19,7 +19,7 @@
       </feature>
     </config-file>
     <source-file src="src/android/Plugin_CertificateAuthentication.java" target-dir="src/ch/migros/plugin"/>
-    <resource-file src="src/android/res/values/strings.xml" target="res/values/strings.xml" />
+    <resource-file src="src/android/res/values/strings.xml" target="res/values/Plugin_CertificateAuthentication_strings.xml" />
   </platform>
 
 </plugin>
