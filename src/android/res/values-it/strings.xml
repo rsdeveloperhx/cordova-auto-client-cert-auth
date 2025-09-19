@@ -3,5 +3,5 @@
     <string name="certtitle">Errore del certificato</string>
     <string name="certmsg1">La finestra del certificato è stata chiusa premendo il pulsante "RIFIUTA". Si prega di scegliere un certificato il cui nome contenga "devicemgl".</string>
     <string name="certmsg2">Il certificato non è valido. Si prega di scegliere un certificato che inizi con "devicemgl".</string>
-    <string name="certmsg3">Il certificato è scaduto. L&apos;app deve essere chiusa. Scegli un altro certificato dopo aver riavviato l&apos;app.</string>
+    <string name="certmsg3">Il certificato e scaduto. Lapp deve essere chiusa. Scegli un altro certificato dopo aver riavviato lapp.</string>
 </resources>
