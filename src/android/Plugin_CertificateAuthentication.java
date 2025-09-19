@@ -6,6 +6,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -237,16 +239,23 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
             }
         }
 
+        private String getMessageText(String ivKey){
+            Context context = s_cordova.getActivity().getApplicationContext();
+            int lvIdent = context.getResources().getIdentifier(ivKey, "string", context.getPackageName());
+            String lMessage = context.getString(lvIdent, context.getPackageName());
+            return lMessage;
+        }
+
         private void showWarningExpiredCert() {
-            showMessageBox("Certificate Warining","Certificate is expired. The app must be closed. Please choose another certificate after app restart.",true);
+            showMessageBox(getMessageText("certtitle"),getMessageText("certmsg3"),true);
         }
 
         private void showWarningWrongCert() {
-            showMessageBox("Certificate Warining","Certificate is wrong. please choose a certificate starting with ´devicemgl´");
+            showMessageBox(getMessageText("certtitle"),getMessageText("certmsg2"));
         }
 
         private void showCertificateMustBeSelected() {
-            showMessageBox("Certificate Warining","Certificate Dialog was closed with ´ablehnen´. please choose a certificate starting with ´devicemgl´");
+            showMessageBox(getMessageText("certtitle"),getMessageText("certmsg1"));
         }
 
         private void showMessageBox(String title, String message) {
