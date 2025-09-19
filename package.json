@@ -1,6 +1,6 @@
 {
 	"name": "cordova-auto-client-cert-auth",
-	"version": "1.1.7",
+	"version": "1.1.8",
 	"description": "SSL cert authentication with configurable certificate autoselection of a certificate from the key store.",
 	"cordova": {
 		"id": "cordova-auto-client-cert-auth",
