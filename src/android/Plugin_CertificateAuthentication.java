@@ -78,12 +78,7 @@ public class Plugin_CertificateAuthentication extends CordovaPlugin {
             @Override
             public void run() {
                 webView.clearCache(true);
-                // webView.clearFormData();
-                //webView.clearMatches();
-                //webView.clearSslPreferences();
                 webView.clearHistory();
-                //   AppStorage.clearCookies(webView.getOriginalUrl());
-                //  AppStorage.clearCookies(webView.getUrl());
                 boolean result = ((ActivityManager) s_cordova.getContext().getSystemService(Context.ACTIVITY_SERVICE)).clearApplicationUserData();
                 terminateApp();
             }
