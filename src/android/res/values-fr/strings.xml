@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="certtitle">Erreur de certificat</string>
-    <string name="certmsg1">La boîte de dialogue du certificat a été fermée en utilisant le bouton "REFUSER". Veuillez choisir un certificat dont le nom contient "devicemgl".</string>
-    <string name="certmsg2">Le certificat est incorrect. Veuillez choisir un certificat commençant par "devicemgl".</string>
-    <string name="certmsg3">Le certificat a expire. Lapplication doit etre fermee. Choisissez un autre certificat apres le redemarrage.</string>
+    <string name="certmsg1">La sélection du certificat a été fermée. Veuillez choisir un certificat qui commence par "devicemgl".</string>
+    <string name="certmsg2">Le certificat n’est pas valide. Veuillez choisir un certificat qui commence par "devicemgl".</string>
+    <string name="certmsg3">Le certificat a expiré. L’app doit être fermée. Après le redémarrage, veuillez choisir un certificat qui commence par "devicemgl".</string>
 </resources>
