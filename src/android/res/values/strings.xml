@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="certtitle">Zertifikatsfehler</string>
-    <string name="certmsg1">Der Zertifikatsdialog wurde mit der Schaltfläche "ABLEHNEN" geschlossen. Bitte wählen Sie ein Zertifikat, dessen Name "devicemgl" enthält.</string>
+    <string name="certmsg1">Die Zertifikatsauswahl wurde abgebrochen. Bitte wählen Sie ein Zertifikat, das mit "devicemgl" beginnt.</string>
     <string name="certmsg2">Das Zertifikat ist ungültig. Bitte wählen Sie ein Zertifikat, das mit "devicemgl" beginnt.</string>
-    <string name="certmsg3">Das Zertifikat ist abgelaufen. Die App muss geschlossen werden. Bitte wählen Sie nach dem Neustart der App ein anderes Zertifikat aus.</string>
+    <string name="certmsg3">Zertifikat abgelaufen. Die App wird geschlossen. Bitte wählen Sie nach dem Neustart ein Zertifikat, das mit "devicemgl" beginnt.</string>
 </resources>
