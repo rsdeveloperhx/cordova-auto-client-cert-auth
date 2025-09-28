@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
 		id="cordova-auto-client-cert-auth"
-		version="1.2.0">
+		version="1.2.1">
 
   <name>Client auto certificate authentication</name>
   <description>Cordova auto certificate authentication Plugin</description>
