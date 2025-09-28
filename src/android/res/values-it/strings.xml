@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="certtitle">Errore del certificato</string>
-    <string name="certmsg1">La finestra del certificato è stata chiusa premendo il pulsante "RIFIUTA". Si prega di scegliere un certificato il cui nome contenga "devicemgl".</string>
-    <string name="certmsg2">Il certificato non è valido. Si prega di scegliere un certificato che inizi con "devicemgl".</string>
-    <string name="certmsg3">Il certificato e scaduto. Lapp deve essere chiusa. Scegli un altro certificato dopo aver riavviato lapp.</string>
+    <string name="certmsg1">La selezione del certificato è stata chiusa. Selezionare un certificato che inizia con "devicemgl".</string>
+    <string name="certmsg2">Il certificato non è valido. Selezionare un certificato che inizia con "devicemgl".</string>
+    <string name="certmsg3">Il certificato è scaduto. L’app verrà chiusa. Dopo il riavvio, selezionare un certificato che inizia con "devicemgl".</string>
 </resources>
